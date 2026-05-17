@@ -36,4 +36,14 @@ public class OptimisationCoverLetter
         KeyPointsMade = keyPointsMade,
         GeneratedAt = DateTime.UtcNow
     };
+
+    public void Update(string coverLetter, int wordCount, string salutationUsed, List<string> keyPointsMade)
+    {
+        CoverLetter = coverLetter;
+        WordCount = wordCount;
+        SalutationUsed = salutationUsed;
+        KeyPointsMade = keyPointsMade;
+        Accepted = null;
+        GeneratedAt = DateTime.UtcNow;
+    }
 }

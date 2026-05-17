@@ -1,12 +1,15 @@
+using GetJobAI.Optimisation.Api;
 using GetJobAI.Optimisation.Contracts;
 using GetJobAI.Optimisation.Data;
 using GetJobAI.Optimisation.Messaging.Consumers;
 using GetJobAI.Optimisation.OptimisationService;
 using GetJobAI.Optimisation.OptimisationService.MetricsCollector;
 using GetJobAI.Optimisation.Prompts;
+using GetJobAI.Optimisation.Services;
 using Google.GenAI;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Events;
 
@@ -54,6 +57,7 @@ builder.Services.AddScoped<IPromptRunner>(sp =>
         sp.GetRequiredService<ILogger<LoggingPromptRunner>>()));
 
 builder.Services.AddScoped<IOptimisationOrchestrator, OptimisationOrchestrator>();
+builder.Services.AddScoped<OptimisationContextFactory>();
 
 builder.Services.AddDbContext<OptimisationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
@@ -79,7 +83,20 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-builder.Services.AddOpenApi();
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("database");
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((doc, _, _) =>
+    {
+        doc.Info.Title = "GetJobAI Optimisation API";
+        doc.Info.Version = "v1";
+        doc.Info.Description = "AI-powered resume optimisation service. Triggered by a ResumeScored event; " +
+                               "exposes endpoints for reviewing and rewriting AI suggestions.";
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
@@ -89,5 +106,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapHealthChecks("/healthz");
+app.MapOptimisationEndpoints();
+app.MapScalarApiReference();
 app.Run();
 
