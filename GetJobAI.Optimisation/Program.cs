@@ -72,7 +72,7 @@ builder.Services.AddMassTransit(x =>
         
         cfg.UseRawJsonSerializer();
 
-        cfg.ReceiveEndpoint("service.ai-optimiser.resume-scored", e =>
+        cfg.ReceiveEndpoint("ai-optimizer.resume.scored", e =>
         {
             e.ConfigureConsumer<ResumeScoredConsumer>(context);
         });

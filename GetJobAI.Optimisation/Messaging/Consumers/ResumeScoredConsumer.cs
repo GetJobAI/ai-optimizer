@@ -75,7 +75,7 @@ public class ResumeScoredConsumer(
             optimisation.Complete(suggestions.AtsExplanation, suggestions.SkillsGap);
             await db.SaveChangesAsync(context.CancellationToken);
 
-            await context.Publish(new ResumeOptimised
+            await context.Publish(new ResumeOptimized
             {
                 OptimisationId = optimisation.Id,
                 ResumeId = optimisation.ResumeId,
@@ -92,7 +92,7 @@ public class ResumeScoredConsumer(
             optimisation.Fail(ex.Message);
             await db.SaveChangesAsync(context.CancellationToken);
 
-            await context.Publish(new ResumeOptimised
+            await context.Publish(new ResumeOptimized
             {
                 OptimisationId = optimisation.Id,
                 ResumeId = optimisation.ResumeId,

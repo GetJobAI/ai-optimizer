@@ -1,6 +1,9 @@
+using MassTransit;
+
 namespace GetJobAI.Optimisation.Messaging.Events;
 
-public record ResumeOptimised
+[EntityName("resume.optimized")]
+public record ResumeOptimized
 {
     public Guid OptimisationId { get; init; }
 
