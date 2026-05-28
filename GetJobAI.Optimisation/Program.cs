@@ -100,11 +100,7 @@ builder.Services.AddOpenApi(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
+app.MapOpenApi();
 app.UseHttpsRedirection();
 app.MapHealthChecks("/healthz");
 app.MapOptimisationEndpoints();
